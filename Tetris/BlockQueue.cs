@@ -17,7 +17,7 @@ namespace Tetris
 
         private readonly Random random = new Random();
 
-        public Block NextBlock { get; privare set; }
+        public Block NextBlock { get; private set; }
 
         public BlockQueue()
         {
@@ -26,10 +26,10 @@ namespace Tetris
 
         private Block RandomBlock() 
         {
-            return blocks[random.Next(blocks.Length)]
+            return blocks[random.Next(blocks.Length)];
         }
 
-        public BlockQueue GetAndUpdate()
+        public Block GetAndUpdate()
         {
             Block block = NextBlock;
 
