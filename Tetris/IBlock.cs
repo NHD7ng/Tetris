@@ -1,6 +1,6 @@
 ﻿namespace Tetris
 {
-    public class Iblock : Block
+    public class IBlock : Block
     {
         private readonly Position[][] tiles = new Position[][]
         {
