@@ -132,7 +132,7 @@ namespace Tetris
                 case Key.Down:
                     gameState.MoveBlockDown();
                     break;
-                case Key.Up:
+                case Key.X:
                     gameState.RotateBlockCW();
                     break;
                 case Key.Z:
