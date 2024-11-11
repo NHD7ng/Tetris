@@ -83,7 +83,7 @@
                         Background="LightGreen"
                         Margin="0,20,0,0"
                         Padding="5"
-                        Click="Button_Click"/>
+                        Click="PlayAgain_Click"/>
             </StackPanel>
             
         </Grid>
