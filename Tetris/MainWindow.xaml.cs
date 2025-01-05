@@ -42,8 +42,10 @@ namespace Tetris
 
         private readonly Image[,] imageControls;
         private readonly int maxDelay = 550;
-        private readonly int minDelay = 75;
-        private readonly int delayDecrease = 25;
+        private readonly int minDelay = 100;
+        private readonly int delayDecrease = 30;
+        private bool isPaused = false;
+
 
         private GameState gameState = new GameState();
 
@@ -51,6 +53,11 @@ namespace Tetris
         {
             InitializeComponent();
             imageControls = SetupGameCanvas(gameState.GameGrid);
+
+            PlayState.Visibility = Visibility.Hidden;
+            GameOverMenu.Visibility = Visibility.Hidden;
+            PauseMenu.Visibility = Visibility.Hidden;
+            Menu.Visibility = Visibility.Visible;
         }
 
         private Image[,] SetupGameCanvas(GameGrid grid)
@@ -144,6 +151,12 @@ namespace Tetris
 
             while (!gameState.GameOver)
             {
+                if (isPaused)
+                {
+                    await Task.Delay(1); // Chờ cho đến khi hết tạm dừng
+                    continue;
+                }
+
                 int delay = Math.Max(minDelay, maxDelay - (gameState.Score * delayDecrease));
                 await Task.Delay(delay);
                 gameState.MoveBlockDown();
@@ -159,6 +172,24 @@ namespace Tetris
             if (gameState.GameOver)
             {
                 return;
+            }
+
+            if (e.Key == Key.P)
+            {
+                if (isPaused)
+                {
+                    ResumeButton_Click(null, null);
+                }
+                else
+                {
+                    PauseButton_Click(null, null);
+                }
+                return;
+            }
+
+            if (isPaused)
+            {
+                return; // Không xử lý phím khi đang tạm dừng
             }
 
             switch (e.Key)
@@ -191,6 +222,7 @@ namespace Tetris
             Draw(gameState);
         }
 
+
         private async void GameCanvas_Loaded(object sender, RoutedEventArgs e)
         {
             await GameLoop();
@@ -201,6 +233,44 @@ namespace Tetris
             gameState = new GameState();
             GameOverMenu.Visibility = Visibility.Hidden;
             await GameLoop();
+        }
+
+        private void PauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            isPaused = true;
+            PauseMenu.Visibility = Visibility.Visible;
+        }
+
+        private void ResumeButton_Click(object sender, RoutedEventArgs e)
+        {
+            isPaused = false;
+            PauseMenu.Visibility = Visibility.Hidden;
+        }
+
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Ẩn Menu và hiển thị PlayState
+            Menu.Visibility = Visibility.Hidden;
+            PlayState.Visibility = Visibility.Visible;
+
+            // Khởi tạo lại trạng thái game nếu cần
+            gameState = new GameState();
+
+            // Bắt đầu vòng lặp game
+            await GameLoop();
+        }
+
+        private void ReturnButton_Click(object sender, RoutedEventArgs e)
+        {
+            PlayState.Visibility = Visibility.Hidden;
+            GameOverMenu.Visibility = Visibility.Hidden;
+            PauseMenu.Visibility = Visibility.Hidden;
+            Menu.Visibility = Visibility.Visible;
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown(); // Thoát game
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
